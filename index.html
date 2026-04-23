@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Slider</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e1e2f, #2c2c54);
+  font-family: Arial, sans-serif;
+}
+.slider {
+  position: relative;
+  width: 420px;
+  height: 50px;
+}
+.track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: #444;
+  transform: translateY(-50%);
+  border-radius: 10px;
+}
+.progress {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 8px;
+  background: linear-gradient(90deg, #00f5a0, #00d9f5);
+  transform: translateY(-50%);
+  border-radius: 10px;
+  width: 0%;
+}
+.thumb {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 3px solid #00d9f5;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0,217,245,0.7);
+  transition: transform 0.1s;
+}
+.thumb:active {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+.value {
+  position: absolute;
+  top: -10px;
+  transform: translate(-50%, -150%);
+  background: #00d9f5;
+  color: #000;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+</style>
+</head>
+<body>
+
+<div class="slider" id="slider">
+  <div class="track"></div>
+  <div class="progress" id="progress"></div>
+  <div class="thumb" id="thumb"></div>
+  <div class="value" id="value">50</div>
+</div>
+
+<script>
+const slider = document.getElementById('slider');
+const thumb = document.getElementById('thumb');
+const valueLabel = document.getElementById('value');
+const progress = document.getElementById('progress');
+
+const min = 0;
+const max = 100;
+
+let isDragging = false;
+
+function setPosition(clientX) {
+  const rect = slider.getBoundingClientRect();
+  let offsetX = clientX - rect.left;
+  offsetX = Math.max(0, Math.min(offsetX, rect.width));
+  const percent = offsetX / rect.width;
+  const value = Math.round(min + percent * (max - min));
+  thumb.style.left = percent * 100 + '%';
+  valueLabel.style.left = percent * 100 + '%';
+  progress.style.width = percent * 100 + '%';
+  valueLabel.textContent = value;
+}
+
+thumb.addEventListener('mousedown', () => isDragging = true);
+
+document.addEventListener('mousemove', e => {
+  if (isDragging) setPosition(e.clientX);
+});
+
+document.addEventListener('mouseup', () => isDragging = false);
+
+slider.addEventListener('click', e => setPosition(e.clientX));
+
+setPosition(slider.getBoundingClientRect().left + slider.offsetWidth / 2);
+</script>
+
+</body>
+</html>
